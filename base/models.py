@@ -36,10 +36,20 @@ class user(AbstractBaseUser):
     email = models.EmailField(unique=True)
     is_company = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
+    is_supporter = models.BooleanField(default=False)
 
     objects = UserManager();
 
     USERNAME_FIELD = 'email';
+
+class manager(models.Model):
+    firstName = models.CharField(max_length=25)
+    lastName = models.CharField(max_length=25)
+
+class supporter(models.Model):
+    firstName = models.CharField(max_length=25)
+    lastName = models.CharField(max_length=25)
 
 class company(models.Model):
     user = models.OneToOneField(user, on_delete=models.CASCADE,
@@ -69,4 +79,32 @@ class employee(models.Model):
     nationalCode = models.CharField(max_length=10, null=True)
     suggestedBy = models.IntegerField(default=0) # number of employers that suggest employee for work
     
+class job(models.Model):
+    company = models.ForeignKey(to=company, on_delete=models.CASCADE)
+    jobTitle = models.CharField(max_length=50)
+    jobDescription = models.TextField()
+    requiredSkills = models.TextField()
+    rules = models.TextField()
+    category = models.CharField(max_length=25)
+    subCategory = models.CharField(max_length=30)
+    minimumHourlySalary = models.FloatField()
+    address = models.TextField()
 
+class shift(models.Model):
+    job = models.ForeignKey(to=job, on_delete=models.CASCADE)
+    date = models.DateField()
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    salary = models.FloatField()
+    numberOfApplicants = models.IntegerField()
+
+    class Meta:
+        unique_together = ('job', 'date', 'startTime', 'endTime')
+
+class jobApplication(models.Model):
+    shift = models.ForeignKey(to=shift, on_delete=models.CASCADE)
+    employee = models.ForeignKey(to=employee, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20)
+
+    class Meta:
+        unique_together = ('shift', 'employee')
