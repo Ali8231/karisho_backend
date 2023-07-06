@@ -80,13 +80,60 @@ class Employee(models.Model):
     suggestedBy = models.IntegerField(default=0) # number of employers that suggest employee for work
     
 class Job(models.Model):
+
+    HOSPITALITY = "Hospitality"
+    RETAIL = "Retail"
+    LOGISTICS = "Logistics"
+    CATEGORY_CHOICES = [
+        (HOSPITALITY, "مهمان داری"),
+        (RETAIL, "خرده فروشی"),
+        (LOGISTICS, "تدارکات"),
+    ]
+
+    SUBCATEGORY_CHOICES = [
+        (
+            HOSPITALITY,
+            (
+                ("Barista", "باریستا"),
+                ("Bartending", "متصدی بار"),
+                ("Catering", "پذیرایی"),
+                ("Chef de partie", "سرآشپز"),
+                ("Cleaning", "نظافت چی"),
+                ("Cloakroom Assistant", "دستیار رخت کن"),
+                ("Hosting", "میزبانی"),
+                ("Housekeeping", "خانه داری"),
+                ("Kitchen Porter", "کارگر آشپزخانه"),
+                ("Room Service", "سرویس اتاق"),
+                ("Sous-Chef", "دستیار سرآشپز"),
+                ("Waiter", "پیشخدمت"),
+            ),
+        ),
+        (
+            RETAIL,
+            (
+                ("Sales Associate", "فروشنده"),
+                ("Stock Assistant", "مشاور سهام"),
+            ),
+        ),
+        (
+            LOGISTICS,
+            (
+                ("Driver", "راننده"),
+                ("Warehouse Assistant", "انباردار"),
+            ),
+        ),
+    ]
+
+
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
     jobTitle = models.CharField(max_length=50)
     jobDescription = models.TextField()
     requiredSkills = models.TextField()
     rules = models.TextField()
-    category = models.CharField(max_length=25)
-    subCategory = models.CharField(max_length=30)
+    category = models.CharField(max_length=25,
+                                choices=CATEGORY_CHOICES)
+    subCategory = models.CharField(max_length=30,
+                                   choices=SUBCATEGORY_CHOICES)
     minimumHourlySalary = models.FloatField()
     address = models.TextField()
 
@@ -102,9 +149,20 @@ class Shift(models.Model):
         unique_together = ('job', 'date', 'startTime', 'endTime')
 
 class JobApplication(models.Model):
+
+    ACCEPTED = "Accepted"
+    REJECTED = "Rejected"
+    PENDING = "Pending"
+    STATUS_CHOICES = [
+        (ACCEPTED, "قبول شده"),
+        (REJECTED, "رد شده"),
+        (PENDING, "در حال بررسی"),
+    ]
+
     shift = models.ForeignKey(to=Shift, on_delete=models.CASCADE)
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20,
+                              choices=STATUS_CHOICES)
 
     class Meta:
         unique_together = ('shift', 'employee')
