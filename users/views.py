@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from base.models import User
-from users.serializers import SingupEmployeeSerializer
+from users.serializers import SingupEmployeeSerializer, EmailLoginSerializer
 
 class SingupEmployeeApiView(generics.CreateAPIView):
     
@@ -22,3 +22,14 @@ class SingupEmployeeApiView(generics.CreateAPIView):
             'token': token.key
         }
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+    
+class EmailLoginApiView(generics.GenericAPIView):
+    permissions = [permissions.AllowAny]
+    serializer_class = EmailLoginSerializer
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
