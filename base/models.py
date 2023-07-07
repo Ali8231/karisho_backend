@@ -32,7 +32,7 @@ class UserManager(UserManager):
 
         return self._create_user( phoneNumber, password, **extra_fields)
 
-class user(AbstractBaseUser):
+class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     is_company = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=False)
@@ -43,16 +43,16 @@ class user(AbstractBaseUser):
 
     USERNAME_FIELD = 'email';
 
-class manager(models.Model):
+class Manager(models.Model):
     firstName = models.CharField(max_length=25)
     lastName = models.CharField(max_length=25)
 
-class supporter(models.Model):
+class Supporter(models.Model):
     firstName = models.CharField(max_length=25)
     lastName = models.CharField(max_length=25)
 
-class company(models.Model):
-    user = models.OneToOneField(user, on_delete=models.CASCADE,
+class Company(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
                                  primary_key=True, related_name='company')
     name = models.CharField(max_length=100)
     employerFirstName = models.CharField(max_length=50)
@@ -63,8 +63,8 @@ class company(models.Model):
     biography = models.TextField(blank=True)
     rating = models.FloatField(default=0.0)
 
-class employee(models.Model):
-    user = models.OneToOneField(user, on_delete=models.CASCADE,
+class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
                                  primary_key=True, related_name='employee')
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
@@ -79,19 +79,66 @@ class employee(models.Model):
     nationalCode = models.CharField(max_length=10, null=True)
     suggestedBy = models.IntegerField(default=0) # number of employers that suggest employee for work
     
-class job(models.Model):
-    company = models.ForeignKey(to=company, on_delete=models.CASCADE)
+class Job(models.Model):
+
+    HOSPITALITY = "Hospitality"
+    RETAIL = "Retail"
+    LOGISTICS = "Logistics"
+    CATEGORY_CHOICES = [
+        (HOSPITALITY, "مهمان داری"),
+        (RETAIL, "خرده فروشی"),
+        (LOGISTICS, "تدارکات"),
+    ]
+
+    SUBCATEGORY_CHOICES = [
+        (
+            HOSPITALITY,
+            (
+                ("Barista", "باریستا"),
+                ("Bartending", "متصدی بار"),
+                ("Catering", "پذیرایی"),
+                ("Chef de partie", "سرآشپز"),
+                ("Cleaning", "نظافت چی"),
+                ("Cloakroom Assistant", "دستیار رخت کن"),
+                ("Hosting", "میزبانی"),
+                ("Housekeeping", "خانه داری"),
+                ("Kitchen Porter", "کارگر آشپزخانه"),
+                ("Room Service", "سرویس اتاق"),
+                ("Sous-Chef", "دستیار سرآشپز"),
+                ("Waiter", "پیشخدمت"),
+            ),
+        ),
+        (
+            RETAIL,
+            (
+                ("Sales Associate", "فروشنده"),
+                ("Stock Assistant", "مشاور سهام"),
+            ),
+        ),
+        (
+            LOGISTICS,
+            (
+                ("Driver", "راننده"),
+                ("Warehouse Assistant", "انباردار"),
+            ),
+        ),
+    ]
+
+
+    company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
     jobTitle = models.CharField(max_length=50)
     jobDescription = models.TextField()
     requiredSkills = models.TextField()
     rules = models.TextField()
-    category = models.CharField(max_length=25)
-    subCategory = models.CharField(max_length=30)
+    category = models.CharField(max_length=25,
+                                choices=CATEGORY_CHOICES)
+    subCategory = models.CharField(max_length=30,
+                                   choices=SUBCATEGORY_CHOICES)
     minimumHourlySalary = models.FloatField()
     address = models.TextField()
 
-class shift(models.Model):
-    job = models.ForeignKey(to=job, on_delete=models.CASCADE)
+class Shift(models.Model):
+    job = models.ForeignKey(to=Job, on_delete=models.CASCADE)
     date = models.DateField()
     startTime = models.TimeField()
     endTime = models.TimeField()
@@ -101,10 +148,21 @@ class shift(models.Model):
     class Meta:
         unique_together = ('job', 'date', 'startTime', 'endTime')
 
-class jobApplication(models.Model):
-    shift = models.ForeignKey(to=shift, on_delete=models.CASCADE)
-    employee = models.ForeignKey(to=employee, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20)
+class JobApplication(models.Model):
+
+    ACCEPTED = "Accepted"
+    REJECTED = "Rejected"
+    PENDING = "Pending"
+    STATUS_CHOICES = [
+        (ACCEPTED, "قبول شده"),
+        (REJECTED, "رد شده"),
+        (PENDING, "در حال بررسی"),
+    ]
+
+    shift = models.ForeignKey(to=Shift, on_delete=models.CASCADE)
+    employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20,
+                              choices=STATUS_CHOICES)
 
     class Meta:
         unique_together = ('shift', 'employee')
