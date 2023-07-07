@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from base.models import user
+from base.models import User
 
 class SingupEmployeeSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -29,5 +29,5 @@ class SingupEmployeeSerializer(serializers.Serializer):
         email = validated_data['email']
         password = validated_data['password']
         
-        user = user.objects.create_user(email, password)
+        user = User.objects.create_user(email, password)
         return user
