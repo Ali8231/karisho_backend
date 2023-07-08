@@ -55,11 +55,49 @@ class Supporter(models.Model):
     lastName = models.CharField(max_length=25)
 
 class Company(models.Model):
+
+    PROVINCE_CHOICES = [
+        ("AzerbayjanSharghi", "آذربایجان شرقی"),
+        ("AzerbayjanGharbi", "آذربایجان غربی"),
+        ("Ardebil", "اردبیل"),
+        ("Isfahan", "اصفهان"),
+        ("Alborz", "البرز"),
+        ("Ilam", "ایلام"),
+        ("Boshehr", "بوشهر"),
+        ("Tehran", "تهران"),
+        ("ChaharMahal", "چهارمحال و بختیاری"),
+        ("KhorasanJonobi", "خراسان جنوبی"),
+        ("KhorasanShomali", "خراسان شمالی"),
+        ("KhorasanRazavi", "خراسان رضوی"),
+        ("Khuzestan", "کردستان"),
+        ("Zanjan", "زنجان"),
+        ("Semnan", "سمنان"),
+        ("Sistan", "سیستان و بلوچستان"),
+        ("Fars", "فارس"),
+        ("Qazvin", "قزوین"),
+        ("Qom", "قم"),
+        ("Kordestan", "کردستان"),
+        ("Kerman", "کرمان"),
+        ("Kermanshah", "کرمانشاه"),
+        ("Kohgiloye", "کهگیلویه و بویراحمد"),
+        ("Golestan", "گلستان"),
+        ("Gilan", "گیلان"),
+        ("Lorestan", "لرستان"),
+        ("Mazandaran", "مازندران"),
+        ("Markazi", "مرکزی"),
+        ("Hormozgan", "هرمزگان"),
+        ("Hamedan", "همدان"),
+        ("Yazd", "یزد"),
+    ]
+
+
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                  primary_key=True, related_name='company')
     name = models.CharField(max_length=100)
     employerFirstName = models.CharField(max_length=50)
     employerLastName = models.CharField(max_length=50)
+    province = models.CharField(max_length=50, blank=True,
+                                choices=PROVINCE_CHOICES)
     address = models.TextField(blank=True)
     phoneNumber = models.CharField(max_length=12, blank=True)
     picture = models.ImageField(null=True, blank=True)
