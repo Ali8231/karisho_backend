@@ -97,8 +97,7 @@ class Job(models.Model):
         (
             HOSPITALITY,
             (
-                ("Barista", "باریستا"),
-                ("Bartending", "متصدی بار"),
+                ("Barista", "متصدی بار"),
                 ("Catering", "پذیرایی"),
                 ("Chef de partie", "سرآشپز"),
                 ("Cleaning", "نظافت چی"),
@@ -121,6 +120,7 @@ class Job(models.Model):
         (
             LOGISTICS,
             (
+                ("Forklift Driver", "راننده لیفتراک"),
                 ("Driver", "راننده"),
                 ("Warehouse Assistant", "انباردار"),
             ),
