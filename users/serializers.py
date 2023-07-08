@@ -1,8 +1,8 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from base.models import User, Employee
+from base.models import User, Employee, Company
 
-class SingupEmployeeSerializer(serializers.Serializer):
+class SignupEmployeeSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(min_length=6, write_only=True)
     password_repeat = serializers.CharField(min_length=6, write_only=True)
@@ -29,6 +29,44 @@ class SingupEmployeeSerializer(serializers.Serializer):
         
         user = User.objects.create_user(email, password, is_employee=True)
         Employee.objects.create(user=user)
+        return user
+    
+class SignupCompanySerializer(serializers.Serializer):
+    company_name = serializers.CharField(write_only=True)
+    first_name = serializers.CharField(write_only=True)
+    last_name = serializers.CharField(write_only=True)
+    email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=6)
+    password_repeat = serializers.CharField(write_only=True, min_length=6)
+    token = serializers.CharField(read_only=True)
+    
+    def validate(self, attrs):
+        company_name = attrs.get('company_name')
+        first_name = attrs.get('first_name')
+        last_name = attrs.get('last_name')
+        email = attrs.get('email')
+        password = attrs.get('password')
+        password_repeat = attrs.get('password_repeat')
+        
+        if company_name and first_name and last_name and email and password and password_repeat and (password == password_repeat):
+            if User.objects.filter(email=email).exists():
+                msg = 'There is a user with this email!'
+                raise serializers.ValidationError(msg, code='conflict')
+        else:
+            msg = 'Informations must be entered correctly!'
+            raise serializers.ValidationError(msg, code='authorization')
+        
+        return attrs
+    
+    def create(self, validated_data):
+        company_name = validated_data['company_name']
+        first_name = validated_data['first_name']
+        last_name = validated_data['last_name']
+        email = validated_data['email']
+        password = validated_data['password']
+        
+        user = User.objects.create_user(email=email, password=password, is_company=True)
+        Company.objects.create(user=user, name=company_name, employerFirstName=first_name, employerLastName = last_name)
         return user
     
 class EmailLoginSerializer(serializers.Serializer):

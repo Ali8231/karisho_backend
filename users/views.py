@@ -3,11 +3,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from base.models import User
-from users.serializers import SingupEmployeeSerializer, EmailLoginSerializer
+from users.serializers import SignupEmployeeSerializer, SignupCompanySerializer, EmailLoginSerializer
 
-class SingupEmployeeApiView(generics.CreateAPIView):
+class SignupApiView(generics.CreateAPIView): # parent of sign-up API views
     
-    serializer_class = SingupEmployeeSerializer
     permission_classes = [permissions.AllowAny]
     
     def create(self, request, *args, **kwargs):
@@ -22,6 +21,12 @@ class SingupEmployeeApiView(generics.CreateAPIView):
             'token': token.key
         }
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+class SignupEmployeeApiView(SignupApiView):
+    serializer_class = SignupEmployeeSerializer
+    
+class SignupCompanyApiView(SignupApiView):
+    serializer_class = SignupCompanySerializer
     
 class EmailLoginApiView(generics.GenericAPIView):
     permissions = [permissions.AllowAny]
