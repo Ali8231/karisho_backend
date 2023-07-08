@@ -103,6 +103,8 @@ class Company(models.Model):
     picture = models.ImageField(null=True, blank=True)
     biography = models.TextField(blank=True)
     rating = models.FloatField(default=0.0)
+    accountBalance = models.FloatField(default=0)
+    adsNumber = models.IntegerField(default=0)
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
@@ -111,16 +113,21 @@ class Employee(models.Model):
     lastName = models.CharField(max_length=50, blank=True)
     birthDate = models.DateField(null=True, blank=True)
     address = models.TextField(blank=True)
+    postalCode = models.CharField(max_length=10, blank=True)
     phoneNumber = models.CharField(max_length=12, blank=True)
     creditCardNumber = models.CharField(max_length=16, blank=True)
-    picture = models.ImageField(null=True, blank=True)
+    profilePicture = models.ImageField(null=True, blank=True)
+    nationalCardPicture = models.ImageField(null=True, blank=True)
     biography = models.TextField(blank=True)
     resume = models.FileField(null=True, blank=True)
     rating = models.FloatField(default=0.0)
     ratedBy = models.IntegerField(default=0) # number of employers that rated employee
     nationalCode = models.CharField(max_length=10, blank=True)
     suggestedBy = models.IntegerField(default=0) # number of employers that suggest employee for work
-    
+    skillSet = models.TextField(blank=True)
+    experiences = models.TextField(blank=True)
+    favorites = models.TextField(blank=True)
+
 class Job(models.Model):
 
     HOSPITALITY = "Hospitality"
