@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
+from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager, PermissionsMixin
 from django.contrib.auth.hashers import make_password
 
 class UserManager(UserManager):
@@ -21,7 +21,7 @@ class UserManager(UserManager):
         extra_fields.setdefault('is_superuser', False)
         return self._create_user( email, password, **extra_fields)
 
-    def create_superuser(self, phoneNumber, password=None, **extra_fields):
+    def create_superuser(self, email=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -30,9 +30,9 @@ class UserManager(UserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self._create_user( phoneNumber, password, **extra_fields)
+        return self._create_user( email, password, **extra_fields)
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     is_company = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=False)
@@ -60,26 +60,27 @@ class Company(models.Model):
     name = models.CharField(max_length=100)
     employerFirstName = models.CharField(max_length=50)
     employerLastName = models.CharField(max_length=50)
-    address = models.TextField()
-    phoneNumber = models.CharField(max_length=12)
-    picture = models.ImageField()
+    address = models.TextField(blank=True)
+    phoneNumber = models.CharField(max_length=12, blank=True)
+    picture = models.ImageField(null=True, blank=True)
     biography = models.TextField(blank=True)
     rating = models.FloatField(default=0.0)
 
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                  primary_key=True, related_name='employee')
-    firstName = models.CharField(max_length=50)
-    lastName = models.CharField(max_length=50)
-    birthDate = models.DateField()
-    address = models.TextField()
-    phoneNumber = models.CharField(max_length=12)
-    bankAccountNumber = models.CharField(max_length=25)
-    picture = models.ImageField()
+    firstName = models.CharField(max_length=50, blank=True)
+    lastName = models.CharField(max_length=50, blank=True)
+    birthDate = models.DateField(null=True, blank=True)
+    address = models.TextField(blank=True)
+    phoneNumber = models.CharField(max_length=12, blank=True)
+    creditCardNumber = models.CharField(max_length=16, blank=True)
+    picture = models.ImageField(null=True, blank=True)
     biography = models.TextField(blank=True)
-    resume = models.FileField()
+    resume = models.FileField(null=True, blank=True)
     rating = models.FloatField(default=0.0)
-    nationalCode = models.CharField(max_length=10, null=True)
+    ratedBy = models.IntegerField(default=0) # number of employers that rated employee
+    nationalCode = models.CharField(max_length=10, blank=True)
     suggestedBy = models.IntegerField(default=0) # number of employers that suggest employee for work
     
 class Job(models.Model):
@@ -97,8 +98,7 @@ class Job(models.Model):
         (
             HOSPITALITY,
             (
-                ("Barista", "باریستا"),
-                ("Bartending", "متصدی بار"),
+                ("Barista", "متصدی بار"),
                 ("Catering", "پذیرایی"),
                 ("Chef de partie", "سرآشپز"),
                 ("Cleaning", "نظافت چی"),
@@ -121,6 +121,7 @@ class Job(models.Model):
         (
             LOGISTICS,
             (
+                ("Forklift Driver", "راننده لیفتراک"),
                 ("Driver", "راننده"),
                 ("Warehouse Assistant", "انباردار"),
             ),
