@@ -1,0 +1,13 @@
+.git
+.gitignore
+
+Pipfile
+Pipfile.lock
+
+README.md
+
+karisho/__pycache__/
+base/__pycache__/
+users/__pycache__/
+
+*.env
