@@ -7,12 +7,15 @@ RUN apk update \
     && apk add --virtual build-deps gcc python3-dev musl-dev \
     && apk add --no-cache mariadb-dev
 
-RUN apk del build-deps
-
 WORKDIR /app
 
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+RUN apk del build-deps
+
 COPY . /app/
+
+COPY run_django.sh .
+ENTRYPOINT [ "./run_django.sh" ]
