@@ -3,9 +3,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from base.models import User
-from users.serializers import SignupEmployeeSerializer, SignupCompanySerializer, EmailLoginSerializer
+from users.serializers import (
+    SignupEmployeeSerializer, SignupCompanySerializer, EmailLoginSerializer,
+    EmployeeSerializer
+)
 
-class SignupApiView(generics.CreateAPIView): # parent of sign-up API views
+class SignupApi(generics.CreateAPIView): # parent of sign-up API views
     
     permission_classes = [permissions.AllowAny]
     
@@ -22,13 +25,16 @@ class SignupApiView(generics.CreateAPIView): # parent of sign-up API views
         }
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
-class SignupEmployeeApiView(SignupApiView):
+class SignupEmployeeApi(SignupApi):
+    
     serializer_class = SignupEmployeeSerializer
     
-class SignupCompanyApiView(SignupApiView):
+class SignupCompanyApi(SignupApi):
+    
     serializer_class = SignupCompanySerializer
     
-class EmailLoginApiView(generics.GenericAPIView):
+class EmailLoginApi(generics.GenericAPIView):
+    
     permissions = [permissions.AllowAny]
     serializer_class = EmailLoginSerializer
     
@@ -42,3 +48,24 @@ class EmailLoginApiView(generics.GenericAPIView):
             'token': token.key,
             'role': role
         })
+        
+class LogoutApi(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format=None):
+        Token.objects.filter(user=request.user).delete()
+        return Response({"detail": "Successfully logged out."})
+        
+# CRUD APIs
+
+class CreateEmployeeApi(generics.CreateAPIView):
+    
+    permissions = [permissions.IsAuthenticated]
+    serializer_class = EmployeeSerializer
+    
+class UpdateEmployeeApi(generics.UpdateAPIView):
+    
+    permissions = [permissions.IsAuthenticated]
+    serializer_class = EmployeeSerializer
+    
+    

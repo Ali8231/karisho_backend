@@ -1,10 +1,13 @@
-# Register, Login and Logout URLs
-
 from django.urls import path
-from users.views import SignupEmployeeApiView, SignupCompanyApiView, EmailLoginApiView
+from users.views import (
+    SignupEmployeeApi, SignupCompanyApi, EmailLoginApi, LogoutApi,
+    CreateEmployeeApi
+)
 
 urlpatterns = [
-    path('signup-employee/', SignupEmployeeApiView.as_view(), name='signup-employee'),
-    path('signup-company/', SignupCompanyApiView.as_view(), name='signup-company'),
-    path('login/', EmailLoginApiView.as_view(), name='login')
+    path('signup-employee/', SignupEmployeeApi.as_view(), name='signup-employee'),
+    path('signup-employee/info/', CreateEmployeeApi.as_view(), name='create-employee'),
+    path('signup-company/', SignupCompanyApi.as_view(), name='signup-company'),
+    path('login/', EmailLoginApi.as_view(), name='login'),
+    path('logout/', LogoutApi.as_view(), name='logout'),
 ]

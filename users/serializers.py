@@ -1,11 +1,13 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 from base.models import User, Employee, Company
 
 class SignupEmployeeSerializer(serializers.Serializer):
-    email = serializers.EmailField(write_only=True)
-    password = serializers.CharField(min_length=6, write_only=True)
-    password_repeat = serializers.CharField(min_length=6, write_only=True)
+    
+    email = serializers.EmailField(write_only=True, required=True)
+    password = serializers.CharField(min_length=6, write_only=True, required=True)
+    password_repeat = serializers.CharField(min_length=6, write_only=True, required=True)
     token = serializers.CharField(read_only=True)
     
     def validate(self, attrs):
@@ -13,7 +15,7 @@ class SignupEmployeeSerializer(serializers.Serializer):
         password = attrs.get('password')
         password_repeat = attrs.get('password_repeat')
         
-        if email and password and password_repeat and (password == password_repeat):
+        if password == password_repeat:
             if User.objects.filter(email=email).exists():
                 msg = 'There is a user with this email!'
                 raise serializers.ValidationError(msg, code='conflict')
@@ -28,16 +30,16 @@ class SignupEmployeeSerializer(serializers.Serializer):
         password = validated_data['password']
         
         user = User.objects.create_user(email, password, is_employee=True)
-        Employee.objects.create(user=user)
         return user
     
 class SignupCompanySerializer(serializers.Serializer):
-    company_name = serializers.CharField(write_only=True)
-    first_name = serializers.CharField(write_only=True)
-    last_name = serializers.CharField(write_only=True)
-    email = serializers.EmailField(write_only=True)
-    password = serializers.CharField(write_only=True, min_length=6)
-    password_repeat = serializers.CharField(write_only=True, min_length=6)
+    
+    company_name = serializers.CharField(write_only=True, required=True)
+    first_name = serializers.CharField(write_only=True, required=True)
+    last_name = serializers.CharField(write_only=True, required=True)
+    email = serializers.EmailField(write_only=True, required=True)
+    password = serializers.CharField(write_only=True, min_length=6, required=True)
+    password_repeat = serializers.CharField(write_only=True, min_length=6, required=True)
     token = serializers.CharField(read_only=True)
     
     def validate(self, attrs):
@@ -48,7 +50,7 @@ class SignupCompanySerializer(serializers.Serializer):
         password = attrs.get('password')
         password_repeat = attrs.get('password_repeat')
         
-        if company_name and first_name and last_name and email and password and password_repeat and (password == password_repeat):
+        if password == password_repeat:
             if User.objects.filter(email=email).exists():
                 msg = 'There is a user with this email!'
                 raise serializers.ValidationError(msg, code='conflict')
@@ -69,7 +71,22 @@ class SignupCompanySerializer(serializers.Serializer):
         Company.objects.create(user=user, name=company_name, employerFirstName=first_name, employerLastName = last_name)
         return user
     
+class CompleteEmployeeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
+                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
+        required = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
+                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
+        
+    def create(self, validated_data):
+        super().create(validated_data)
+        
+    
+    
 class EmailLoginSerializer(serializers.Serializer):
+    
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True)
     token = serializers.CharField(read_only=True)
@@ -103,4 +120,23 @@ class EmailLoginSerializer(serializers.Serializer):
         attrs['user'] = user
         attrs['role'] = role
         return attrs
-            
+    
+    
+# CRUD Serializers
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Employee
+        fields = "__all__"
+        required = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
+                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
+        extra_kwargs = {'user': {'required': False}}
+        
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        # user.has_completed_signup  = True
+        user.save()
+        employee = Employee.objects.create(**validated_data)
+        return employee
