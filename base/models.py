@@ -41,6 +41,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+<<<<<<< Updated upstream
+=======
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    has_completed_signup = models.BooleanField(default=False)
+>>>>>>> Stashed changes
 
     objects = UserManager();
 
