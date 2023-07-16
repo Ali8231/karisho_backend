@@ -41,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    has_completed_signup = models.BooleanField(default=False)
 
     objects = UserManager();
 
