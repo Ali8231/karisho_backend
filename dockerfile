@@ -17,4 +17,5 @@ RUN apk del build-deps
 
 COPY . /app/
 
+RUN chmod +x /app/run_django.sh
 ENTRYPOINT [ "/app/run_django.sh" ]
