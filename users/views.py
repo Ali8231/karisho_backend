@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from base.models import User
 from users.serializers import (
-    SignupEmployeeSerializer, SignupCompanySerializer, EmailLoginSerializer,
+    SignupEmployeeSerializer, CreateEmployeeSerializer, SignupCompanySerializer, EmailLoginSerializer,
     EmployeeSerializer
 )
 
@@ -63,7 +63,7 @@ class LogoutApi(generics.GenericAPIView):
 class CreateEmployeeApi(generics.CreateAPIView):
     
     permissions = [permissions.IsAuthenticated]
-    serializer_class = EmployeeSerializer
+    serializer_class = CreateEmployeeSerializer
     
 class UpdateEmployeeApi(generics.UpdateAPIView):
     

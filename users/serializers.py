@@ -31,6 +31,22 @@ class SignupEmployeeSerializer(serializers.Serializer):
         
         user = User.objects.create_user(email, password, is_employee=True)
         return user
+
+class CreateEmployeeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Employee
+        fields = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
+                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
+        extra_kwargs = {'user': {'required': False}}
+        
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        user.has_completed_signup  = True
+        user.save()
+        employee = Employee.objects.create(**validated_data)
+        return employee
     
 class SignupCompanySerializer(serializers.Serializer):
     
@@ -43,9 +59,6 @@ class SignupCompanySerializer(serializers.Serializer):
     token = serializers.CharField(read_only=True)
     
     def validate(self, attrs):
-        company_name = attrs.get('company_name')
-        first_name = attrs.get('first_name')
-        last_name = attrs.get('last_name')
         email = attrs.get('email')
         password = attrs.get('password')
         password_repeat = attrs.get('password_repeat')
@@ -117,14 +130,4 @@ class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = "__all__"
-        required = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
-                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
         extra_kwargs = {'user': {'required': False}}
-        
-    def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
-        user.has_completed_signup  = True
-        user.save()
-        employee = Employee.objects.create(**validated_data)
-        return employee

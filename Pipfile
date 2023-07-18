@@ -9,6 +9,7 @@ djangorestframework = "*"
 python-dotenv = "*"
 mysqlclient = "*"
 pillow = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 
