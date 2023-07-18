@@ -67,22 +67,9 @@ class SignupCompanySerializer(serializers.Serializer):
         email = validated_data['email']
         password = validated_data['password']
         
-        user = User.objects.create_user(email=email, password=password, is_company=True)
+        user = User.objects.create_user(email=email, password=password, is_company=True, has_completed_signup=True)
         Company.objects.create(user=user, name=company_name, employerFirstName=first_name, employerLastName = last_name)
         return user
-    
-class CompleteEmployeeSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = User
-        fields = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
-                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
-        required = ['firstName', 'lastName', 'postalCode', 'nationalCode', 'creditCardNumber',
-                  'address', 'profilePicture', 'resume', 'nationalCardPicture']
-        
-    def create(self, validated_data):
-        super().create(validated_data)
-        
     
     
 class EmailLoginSerializer(serializers.Serializer):
@@ -119,6 +106,7 @@ class EmailLoginSerializer(serializers.Serializer):
         
         attrs['user'] = user
         attrs['role'] = role
+        attrs['completed_signup'] = user.has_completed_signup
         return attrs
     
     
@@ -136,7 +124,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
-        # user.has_completed_signup  = True
+        user.has_completed_signup  = True
         user.save()
         employee = Employee.objects.create(**validated_data)
         return employee

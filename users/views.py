@@ -43,10 +43,12 @@ class EmailLoginApi(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         role = serializer.validated_data['role']
+        completed_signup = serializer.validated_data['completed_signup']
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
-            'role': role
+            'role': role,
+            'completed_signup': completed_signup
         })
         
 class LogoutApi(generics.GenericAPIView):
