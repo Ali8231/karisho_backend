@@ -3,11 +3,13 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from base.models import User
-from users.serializers import SingupEmployeeSerializer, EmailLoginSerializer
+from users.serializers import (
+    SignupEmployeeSerializer, SignupCompanySerializer, EmailLoginSerializer,
+    EmployeeSerializer
+)
 
-class SingupEmployeeApiView(generics.CreateAPIView):
+class SignupApi(generics.CreateAPIView): # parent of sign-up API views
     
-    serializer_class = SingupEmployeeSerializer
     permission_classes = [permissions.AllowAny]
     
     def create(self, request, *args, **kwargs):
@@ -22,8 +24,17 @@ class SingupEmployeeApiView(generics.CreateAPIView):
             'token': token.key
         }
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+class SignupEmployeeApi(SignupApi):
     
-class EmailLoginApiView(generics.GenericAPIView):
+    serializer_class = SignupEmployeeSerializer
+    
+class SignupCompanyApi(SignupApi):
+    
+    serializer_class = SignupCompanySerializer
+    
+class EmailLoginApi(generics.GenericAPIView):
+    
     permissions = [permissions.AllowAny]
     serializer_class = EmailLoginSerializer
     
@@ -31,5 +42,32 @@ class EmailLoginApiView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        role = serializer.validated_data['role']
+        completed_signup = serializer.validated_data['completed_signup']
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+        return Response({
+            'token': token.key,
+            'role': role,
+            'completed_signup': completed_signup
+        })
+        
+class LogoutApi(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format=None):
+        Token.objects.filter(user=request.user).delete()
+        return Response({"detail": "Successfully logged out."})
+        
+# CRUD APIs
+
+class CreateEmployeeApi(generics.CreateAPIView):
+    
+    permissions = [permissions.IsAuthenticated]
+    serializer_class = EmployeeSerializer
+    
+class UpdateEmployeeApi(generics.UpdateAPIView):
+    
+    permissions = [permissions.IsAuthenticated]
+    serializer_class = EmployeeSerializer
+    
+    
