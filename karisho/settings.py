@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework.authtoken',
-    'drf_spectacular'
+    #'drf_spectacular',
+    'job',
 ]
 
 REST_FRAMEWORK = {
@@ -55,15 +56,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'
     ],
     
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    #'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Karisho API',
-    'DESCRIPTION': 'Shift finding web app',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-}
+# SPECTACULAR_SETTINGS = {
+#     'TITLE': 'Karisho API',
+#     'DESCRIPTION': 'Shift finding web app',
+#     'VERSION': '1.0.0',
+#     'SERVE_INCLUDE_SCHEMA': False,
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
