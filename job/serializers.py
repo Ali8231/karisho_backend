@@ -26,12 +26,3 @@ class createShiftSerializer(serializers.ModelSerializer):
         fields = ['date', 'startTime', 'endTime', 'salary']
         extra_kwargs = {'job': {'required': False, 'read_only': True},
                         'numberOfApplicants': {'required': False, 'read_only': True}}
-        
-
-        def create(self, validated_data):
-            job_id = self.context.get('view').kwargs.get('job_id')
-            job = Job.objects.get(pk=job_id)
-            job.has_shift = True
-            validated_data['job'] = job
-            shift = Shift.objects.create(**validated_data)
-            return shift
