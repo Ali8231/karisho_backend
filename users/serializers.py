@@ -131,3 +131,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = "__all__"
         extra_kwargs = {'user': {'required': False}}
+        
+class CompanySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Company
+        fields = "__all__"
