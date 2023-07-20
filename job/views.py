@@ -7,11 +7,11 @@ from job.serializers import *
 
 class postAdd(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated, IsCompany]
-    serializer_class = postAddSerializer
+    serializer_class = AddSerializer
 
 class createShift(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated, IsCompany, DoesOwnAdd]
-    serializer_class = createShiftSerializer
+    serializer_class = ShiftSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -19,7 +19,15 @@ class createShift(generics.CreateAPIView):
         job_id = kwargs['job_id']
         job = Job.objects.get(id=job_id)
         job.has_shift = True
+        job.save()
         serializer.validated_data['job'] = job
         shift = Shift.objects.create(**serializer.validated_data)
-        return Response(status=status.HTTP_201_CREATED)
+        data = {
+            'date': shift.date,
+            'startTime': shift.startTime,
+            'endTime': shift.endTime,
+            'salary': shift.salary,
+            'job_id': shift.job.id,
+        }
+        return Response(data=data ,status=status.HTTP_201_CREATED)
 
