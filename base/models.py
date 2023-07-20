@@ -180,14 +180,16 @@ class Job(models.Model):
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
     jobTitle = models.CharField(max_length=50)
     jobDescription = models.TextField()
+    picture = models.ImageField(upload_to="uploads/", null=True)
     requiredSkills = models.TextField()
     rules = models.TextField()
     category = models.CharField(max_length=25,
                                 choices=CATEGORY_CHOICES)
     subCategory = models.CharField(max_length=30,
                                    choices=SUBCATEGORY_CHOICES)
-    minimumHourlySalary = models.FloatField()
+    minimumHourlySalary = models.FloatField(null=True)
     address = models.TextField()
+    has_shift = models.BooleanField(default=False)
 
 class Shift(models.Model):
     job = models.ForeignKey(to=Job, on_delete=models.CASCADE)
@@ -195,7 +197,7 @@ class Shift(models.Model):
     startTime = models.TimeField()
     endTime = models.TimeField()
     salary = models.FloatField()
-    numberOfApplicants = models.IntegerField()
+    numberOfApplicants = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ('job', 'date', 'startTime', 'endTime')
