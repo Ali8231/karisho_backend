@@ -66,15 +66,7 @@ class CreateEmployeeApi(generics.CreateAPIView):
     permissions = [permissions.IsAuthenticated]
     serializer_class = CreateEmployeeSerializer
     
-class GetEmployeeApi(generics.RetrieveAPIView):
-    
-    permissions = [permissions.IsAuthenticated, HasCompletedSignup]
-    serializer_class = EmployeeSerializer
-    
-    def get_object(self):
-        return Employee.objects.get(user=self.request.user)
-    
-class UpdateEmployeeApi(generics.UpdateAPIView):
+class GetUpdateEmployeeApi(generics.RetrieveUpdateAPIView):
     
     permissions = [permissions.IsAuthenticated, HasCompletedSignup]
     serializer_class = EmployeeSerializer
@@ -85,21 +77,12 @@ class UpdateEmployeeApi(generics.UpdateAPIView):
 class DeleteEmployeeApi(generics.DestroyAPIView):
     
     permissions = [permissions.IsAuthenticated, HasCompletedSignup]
-    serializer_class = EmployeeSerializer
     
     def get_object(self):
-        return Employee.objects.get(user=self.request.user)
+        return self.request.user
     
 
-class GetCompanyApi(generics.RetrieveAPIView):
-    
-    permissions = [permissions.IsAuthenticated, HasCompletedSignup]
-    serializer_class = CompanySerializer
-    
-    def get_object(self):
-        return Company.objects.get(user=self.request.user)
-    
-class UpdateCompanyApi(generics.UpdateAPIView):
+class GetUpdateCompanyApi(generics.RetrieveUpdateAPIView):
     
     permissions = [permissions.IsAuthenticated, HasCompletedSignup]
     serializer_class = CompanySerializer
@@ -110,7 +93,6 @@ class UpdateCompanyApi(generics.UpdateAPIView):
 class DeleteCompanyApi(generics.DestroyAPIView):
     
     permissions = [permissions.IsAuthenticated, HasCompletedSignup]
-    serializer_class = CompanySerializer
     
     def get_object(self):
-        return Company.objects.get(user=self.request.user)
+        return self.request.user
