@@ -46,13 +46,9 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework.authtoken',
-<<<<<<< Updated upstream
-    'drf_spectacular'
-=======
-    #'drf_spectacular',
+    'drf_spectacular',
     'job',
     "corsheaders",
->>>>>>> Stashed changes
 ]
 
 REST_FRAMEWORK = {
