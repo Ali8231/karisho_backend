@@ -57,15 +57,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'
     ],
     
-    #'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-# SPECTACULAR_SETTINGS = {
-#     'TITLE': 'Karisho API',
-#     'DESCRIPTION': 'Shift finding web app',
-#     'VERSION': '1.0.0',
-#     'SERVE_INCLUDE_SCHEMA': False,
-# }
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Karisho API',
+    'DESCRIPTION': 'Shift finding web app',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -158,6 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "base.User"
 
+<<<<<<< Updated upstream
 
 # CORS_ALLOWED_ORIGINS = [
 #     "http://127.0.0.1:8080",
@@ -165,3 +166,11 @@ AUTH_USER_MODEL = "base.User"
 # ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+=======
+# CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5500",
+    "http://127.0.0.1:9000",
+]
+>>>>>>> Stashed changes
