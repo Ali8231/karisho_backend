@@ -21,7 +21,8 @@ class SignupApi(generics.CreateAPIView): # parent of sign-up API views
         new_user = User.objects.get(email=serializer.validated_data['email'])
         token, created = Token.objects.get_or_create(user=new_user)
         data = {
-            'token': token.key
+            'token': token.key,
+            'user_id': new_user.id
         }
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -48,7 +49,8 @@ class EmailLoginApi(generics.GenericAPIView):
         return Response({
             'token': token.key,
             'role': role,
-            'completed_signup': completed_signup
+            'completed_signup': completed_signup,
+            'user_id': user.id,
         })
         
 class LogoutApi(generics.GenericAPIView):

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+
 import os
 
 # Load .env file
@@ -158,7 +159,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "base.User"
 
-<<<<<<< Updated upstream
 
 # CORS_ALLOWED_ORIGINS = [
 #     "http://127.0.0.1:8080",
@@ -166,11 +166,3 @@ AUTH_USER_MODEL = "base.User"
 # ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-=======
-# CORS_ALLOW_ALL_ORIGINS = True
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5500",
-    "http://127.0.0.1:9000",
-]
->>>>>>> Stashed changes
