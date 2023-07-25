@@ -26,7 +26,8 @@ class SignupApi(generics.CreateAPIView): # parent of sign-up API views
             'token': token.key,
             'user_id': new_user.id,
             'is_company': new_user.is_company,
-            'is_employee': new_user.is_employee
+            'is_employee': new_user.is_employee,
+            'completed_signup': new_user.has_completed_signup,
         }
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
