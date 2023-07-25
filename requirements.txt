@@ -3,6 +3,5 @@ djangorestframework>=3.14.0
 mysqlclient>=2.2.0
 Pillow>=10.0.0
 python-dotenv>=1.0.0
-<<<<<<< Updated upstream
 django-cors-headers
 drf-spectacular>=0.26
