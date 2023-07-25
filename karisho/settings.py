@@ -32,6 +32,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOST')]
+CSRF_TRUSTED_ORIGINS = ['http://api1.karisho.kveh.ir']
 
 
 # Application definition
